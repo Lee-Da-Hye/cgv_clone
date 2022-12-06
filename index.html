@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style/reset.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .input-container{ 
+            width: 1440px; margin: auto;
+            display: flex;
+            justify-content: flex-end;
+            padding: 30px;
+        }
+        .input-box{ width: 50px; height: 50px; border-radius: 25px;
+            background-color: plum;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color:white;
+            transition: 0.4s ease-in-out;
+        }
+        .input-box>input{ opacity: 0; width:0;}
+        .input-box>input::placeholder{ text-indent: 8px;}
+
+        .input-box.active{
+            width: 300px; 
+            justify-content: space-evenly;
+        }
+        .input-box.active>input{  opacity: 1;
+            width: 80%;
+            height: 30px;
+            background-color: rgb(247, 234, 247);
+            border:1px solid plum;
+            transition-delay: 0.2s;
+        }
+
+        .movies-container{}
+        .movies-contents{ width: 1440px; margin: auto;
+           display: grid;
+           /* grid-template-columns: repeat(4, 1fr);  */
+           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+           gap: 30px;
+        }
+        .movies-box{ width: calc(( 100% - 90px ) / 4);
+            height: 500px; background-color: orange;
+            
+        }
+        .movies-box{  }
+        .movie-img{    height: 500px; overflow: hidden;
+            /* 높이는 반응형 사이즈에 따라 일일히 조정할 필요 있음 */
+        }
+        .movie-img>img{ width:100%; }
+
+        @media screen and (max-width: 1490px){
+            .movies-contents{ width: 98%;}
+        }
+        /* @media screen and (max-width: 970px){
+            .movies-contents{  
+                grid-template-columns: repeat(3, 1fr); 
+            }
+        }
+        @media screen and (max-width: 670px){
+            .movies-contents{  
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        } */
+    </style>
+</head>
+<body>
+    <!-- https://www.kobis.or.kr/kobisopenapi/homepg/apiservice/searchServiceInfo.do -->
+    <div class="input-container">
+        <div class="input-box">
+            <i class='bx bx-search-alt'></i>
+            <!-- <i class='bx bx-x-circle'></i> -->
+            <input type="text" id="userInput" placeholder="검색어를 입력하세요">
+        </div>
+    </div>
+    <div class="movies-container">
+         <div class="movies-contents">
+            <!-- <div class="movie-box">
+                <div class="movie-img">
+                    <img src="http://placekitten.com/400/300" alt="">
+                </div>
+                <div class="movie-details">
+                    <h3>TITLE</h3>
+                    <div class="description">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iure numquam quibusdam consequuntur voluptates voluptatibus, hic temporibus fuga ut qui! Doloremque illum libero sequi suscipit odit, nostrum ut ipsa saepe nam?</div>
+                    <ul class="genres">
+                        <li>필요한 개수만큼 생성</li>
+                    </ul>
+                    <div class="newYear">개봉일정</div>
+                    <div class="rating">별점처리</div>
+                </div>
+            </div> -->
+         </div>
+    </div>
+ <script>
+        const userInput = document.querySelector('#userInput');
+        const bx = document.querySelector('.bx');
+        userInput.addEventListener('keyup', (event)=>{
+            console.log(event.target.value);
+            let searchText = event.target.value;
+            bx.classList.remove('bx-search-alt')
+            bx.classList.add('bx-x-circle');
+        })
+        userInput.addEventListener('focus', (event)=>{   
+            inputBox.classList.add('active');
+        })
+        userInput.addEventListener('blur', ()=>{
+            inputBox.classList.remove('active');
+            bx.classList.add('bx-search-alt');
+            bx.classList.remove('bx-x-circle');
+            userInput.value = '';
+        })
+        bx.addEventListener('click', ()=>{
+            bx.classList.add('bx-search-alt');
+            bx.classList.remove('bx-x-circle');
+            userInput.value = '';
+        })
+        let allMovies = [];
+        const URL = 'https://yts.mx/api/v2/list_movies.json';
+        fetch(URL).then(data =>data.json())
+        .then(data=>{
+            // console.log(data);
+             
+            // if( data.status ){
+            //     console.log( data.data.limit);
+            //     console.log( data.data.movies);
+            //     console.log( data.data.movies.length);
+            // }
+           
+            allMovies = data.data.movies.map( movie => movie );
+            movieList( allMovies ) ; 
+        })
+
+        function movieList(movies){
+            console.log( movies );
+
+            for( movie of movies){
+                createDom( movie);
+            }
+        }
+        
+        function createDom( movie ){
+            const moviesContents = document.querySelector('.movies-contents');
+
+            const movieBox = document.createElement('div');
+            movieBox.classList.add('movie-box');
+            
+            const movieImg = document.createElement('div');
+            movieImg.classList.add('movie-img');
+            
+            const img = document.createElement('img');
+            img.setAttribute('src',  movie.large_cover_image);
+            img.setAttribute('title',  movie.summary);
+
+            movieImg.append(img);
+            movieBox.append( movieImg);
+                         
+            const movieDetails = document.createElement('div');
+            movieDetails.classList.add('movie-details');
+
+            const h3 = document.createElement('h3');
+            h3.innerHTML = movie.title;
+            movieDetails.append(h3); // 제목의 길이를 어떻게 조절할 것인가 
+            movieBox.append(movieDetails);
+
+            const ul = document.createElement('ul');
+            ul.classList.add('genres');
+
+            const genres = movie.genres; 
+            for( genre of genres){
+                const li = document.createElement('li');
+                li.innerHTML = genre;
+                ul.append( li);
+            }
+            movieBox.append(ul);
+
+            const rating = document.createElement('div');
+            rating.classList.add('rating');
+            rating.innerHTML = movie.rating; 
+            
+            movieBox.append(rating);
+            moviesContents.append( movieBox); 
+        }
+    </script>
+    <script>
+        
+        const inputBox = document.querySelector('.input-box');
+        inputBox.addEventListener('mouseenter', ()=>{
+            inputBox.classList.add('active');
+        })
+        
+    </script>
+ 
+  <!-- 
+     git에 업로드 할 예정임 
+     검색
+     <i class='bx bx-x-circle'></i>
+<i class='bx bx-search-alt'></i>
+   -->
+</body>
+</html>
