@@ -101,7 +101,19 @@
         const bx = document.querySelector('.bx');
         userInput.addEventListener('keyup', (event)=>{
             console.log(event.target.value);
-            let searchText = event.target.value;
+            let searchText = event.target.value.toUpperCase();
+
+            if(searchText){
+                const h3s = document.querySelectorAll('h3');
+                for(h3 of h3s){
+                    let h3Text = h3.innerHTML.toUpperCase()
+                    if(!h3Text.includes(searchText)){
+                        h3.parentElement.parentElement.style.display = 'none';
+                    }else{
+                        h3.parentElement.parentElement.style.display = '';
+                    }
+                }
+            }
             bx.classList.remove('bx-search-alt')
             bx.classList.add('bx-x-circle');
         })
