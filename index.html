@@ -7,138 +7,6 @@
     <title>Document</title>
     <link rel="stylesheet" href="./style/reset.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
-        .input-container{ 
-            width: 1440px; margin: auto;
-            display: flex;
-            justify-content: flex-end;
-            padding: 30px;
-        }
-        .input-box{ width: 50px; height: 50px; border-radius: 25px;
-            background-color: plum;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color:white;
-            transition: 0.4s ease-in-out;
-        }
-        .input-box>input{ opacity: 0; width:0;}
-        .input-box>input::placeholder{ text-indent: 8px;}
-
-        .input-box.active{
-            width: 300px; 
-            justify-content: space-evenly;
-        }
-        .input-box.active>input{  opacity: 1;
-            width: 80%;
-            height: 30px;
-            background-color: rgb(247, 234, 247);
-            border:1px solid plum;
-            transition-delay: 0.2s;
-        }
-
-        .movies-container{}
-        .movies-contents{ width: 1440px; margin: auto;
-           display: grid;
-           /* grid-template-columns: repeat(4, 1fr);  */
-           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-           gap: 30px;
-        }
-        .movies-box{ width: calc(( 100% - 90px ) / 4);
-            height: 500px; background-color: orange;
-            
-        }
-        .movies-box{  }
-        .movie-img{    height: 500px; overflow: hidden;
-            /* 높이는 반응형 사이즈에 따라 일일히 조정할 필요 있음 */
-        }
-        .movie-img>img{ width:100%; }
-
-        @media screen and (max-width: 1490px){
-            .movies-contents{ width: 98%;}
-        }
-        /* @media screen and (max-width: 970px){
-            .movies-contents{  
-                grid-template-columns: repeat(3, 1fr); 
-            }
-        }
-        @media screen and (max-width: 670px){
-            .movies-contents{  
-                grid-template-columns: repeat(2, 1fr); 
-            }
-        } */
-    </style>
-    <style>
-        header{
-            width: 1440px;
-            margin: auto;
-            height: 300px;
-        }
-        .genre-container{
-            width: 800px;
-            margin: auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            padding: 10px;
-        }
-        .genre-container button{
-            padding: 15px 10px;
-            width: 120px;
-        }
-        .navigation{
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            z-index: 99;
-            clip-path: circle(25px at calc( 100% - 45px) 45px);
-            transition: 0.3s ease-in-out;
-        }
-        .navigation.active{
-            clip-path: circle(75%);
-        }
-        .navigation .ham-btn{
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        .navigation .ham-btn span{
-            position: absolute;
-            left: 50%;
-            width: 50%;
-            height: 3px;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-        }
-        .navigation .ham-btn span:nth-child(1){
-            top: 30%;
-        }
-        .navigation .ham-btn span:nth-child(2){
-            top: 50%;
-        }
-        .navigation .ham-btn span:nth-child(3){
-            top: 70%;
-        }
-        .navigation.active .ham-btn span:nth-child(1){
-            top: 50%;
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-        .navigation.active .ham-btn span:nth-child(2){
-            opacity: 0;
-        }
-        .navigation.active .ham-btn span:nth-child(3){
-            top: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-        }
-    </style>
 </head>
 <body>
     <!-- https://www.kobis.or.kr/kobisopenapi/homepg/apiservice/searchServiceInfo.do -->
@@ -165,7 +33,7 @@
         </div>
     </div>
     <div class="genre-container">
-        <button>Drama</button>
+        <button>모두보기</button>
         <button>History</button>
         <button>Comedy</button>
         <button>Family</button>
@@ -175,7 +43,7 @@
         <button>Documentary</button>
         <button>Biography</button>
         <button>Sci-Fi</button>
-        <button>Sport</button>
+        <button>Drama</button>
         <button>Action</button>
     </div>
     <div class="movies-container">
@@ -196,151 +64,17 @@
             </div> -->
          </div>
     </div>
- <script>
-        const moviesContents = document.querySelector('.movies-contents');
-        const userInput = document.querySelector('#userInput');
-        const bx = document.querySelector('.bx');
-        let allMovies = [];
-
-        const URL = 'https://yts.mx/api/v2/list_movies.json';
-        fetch(URL).then(data =>data.json())
-        .then(data=>{
-            // console.log(data);
-             
-            // if( data.status ){
-            //     console.log( data.data.limit);
-            //     console.log( data.data.movies);
-            //     console.log( data.data.movies.length);
-            // }
-           
-            allMovies = data.data.movies.map( movie => movie );
-            movieList( allMovies ) ; 
-        })
-
-        userInput.addEventListener('keyup', (event)=>{
-            console.log(event.target.value);
-            let searchText = event.target.value.toUpperCase();
-
-            if(searchText){
-                const h3s = document.querySelectorAll('h3');
-                for(h3 of h3s){
-                    let h3Text = h3.innerHTML.toUpperCase()
-                    if(!h3Text.includes(searchText)){
-                        h3.parentElement.parentElement.style.display = 'none';
-                    }else{
-                        h3.parentElement.parentElement.style.display = '';
-                    }
-                }
-                bx.classList.remove('bx-search-alt');
-                bx.classList.add('bx-x-circle');
-                
-            }else{
-                moviesContents.innerHTML = '';
-                movieList(allMovies);
-            }
-            
-        })
-
-        userInput.addEventListener('focus', (event)=>{   
-            inputBox.classList.add('active');
-        })
-
-        userInput.addEventListener('blur', ()=>{
-            inputBox.classList.remove('active');
-            bx.classList.add('bx-search-alt');
-            bx.classList.remove('bx-x-circle');
-            userInput.value = '';
-        })
-
-        bx.addEventListener('click', ()=>{
-            bx.classList.add('bx-search-alt');
-            bx.classList.remove('bx-x-circle');
-            userInput.value = '';
-
-            //동작 오류류
-            if(bx,classList.contains('bx-search-alt')){
-                moviesContents.innerHTML = '';
-                movieList(allMovies);
-            }
-            
-        })
-        
-
-        function movieList(movies){
-            console.log( movies );
-
-            for( movie of movies){
-                createDom( movie);
-            }
-        }
-        
-        function createDom( movie ){
-           
-
-            const movieBox = document.createElement('div');
-            movieBox.classList.add('movie-box');
-            
-            const movieImg = document.createElement('div');
-            movieImg.classList.add('movie-img');
-            
-            const img = document.createElement('img');
-            img.setAttribute('src',  movie.large_cover_image);
-            img.setAttribute('title',  movie.summary);
-
-            movieImg.append(img);
-            movieBox.append( movieImg);
-                         
-            const movieDetails = document.createElement('div');
-            movieDetails.classList.add('movie-details');
-
-            const h3 = document.createElement('h3');
-            h3.innerHTML = movie.title;
-            movieDetails.append(h3); // 제목의 길이를 어떻게 조절할 것인가 
-            movieBox.append(movieDetails);
-
-            const ul = document.createElement('ul');
-            ul.classList.add('genres');
-
-            const genres = movie.genres; 
-            for( genre of genres){
-                const li = document.createElement('li');
-                li.innerHTML = genre;
-                ul.append( li);
-            }
-            movieBox.append(ul);
-
-            const rating = document.createElement('div');
-            rating.classList.add('rating');
-            rating.innerHTML = movie.rating; 
-            
-            movieBox.append(rating);
-            moviesContents.append( movieBox); 
-        }
-    </script>
-    <script>
-        
-        const inputBox = document.querySelector('.input-box');
-        inputBox.addEventListener('mouseenter', ()=>{
-            inputBox.classList.add('active');
-        })
-
-        //ham 맨위에 있고 navigation이 아래 있어서 클릭이벤트를 받지 못함.
-        const ham = document.querySelector('.ham-btn');
-        ham.addEventListener('click', showNavi)
-        function showNavi(){
-            document.querySelector('.navigation').classList.toggle('active');
-        }
-        
-    </script>
-    <script>
-
-    </script>
+    
  
   <!-- 
      git에 업로드 할 예정임 
      검색
      <i class='bx bx-x-circle'></i>
 <i class='bx bx-search-alt'></i>
+
+
+
+
    -->
 </body>
 </html>
