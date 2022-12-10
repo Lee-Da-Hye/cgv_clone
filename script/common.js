@@ -17,7 +17,7 @@ fetch(URL).then(data =>data.json())
     // }
     
     allMovies = data.data.movies.map( movie => movie );
-    movieList( allMovies ) ; 
+    movieList( allMovies ); 
 })
 
 userInput.addEventListener('keyup', (event)=>{
